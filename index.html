@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎂 Special Birthday Countdown</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎂</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Countdown to a Very Special Birthday!</h1>
+        <div id="countdown" class="countdown-container">
+            <div class="time-box">
+                <span id="days">00</span>
+                <p>Days</p>
+            </div>
+            <div class="time-box">
+                <span id="hours">00</span>
+                <p>Hours</p>
+            </div>
+            <div class="time-box">
+                <span id="minutes">00</span>
+                <p>Minutes</p>
+            </div>
+            <div class="time-box">
+                <span id="seconds">00</span>
+                <p>Seconds</p>
+            </div>
+        </div>
+        <div id="greeting" class="greeting hidden">
+            <h1>🎉 Happy Birthday! 🎉</h1>
+            <p>Wishing you the most amazing, wonderful, and extraordinary day!</p>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-track">
+                <div class="timeline-progress" id="timeline-progress"></div>
+                <!-- Emoji or image of the girl -->
+                <div class="timeline-girl" id="timeline-girl">🚶‍➡️</div>
+            </div>
+            <div class="timeline-labels">
+                <span id="timeline-start-date">April 1</span>
+                <span id="timeline-end-date">May 1</span>
+            </div>
+            <p class="timeline-message" id="timeline-message">Walking towards your special day...</p>
+        </div>
+        
+        <div class="daily-quote-section">
+            <div class="quote-card">
+                <p id="daily-quote" class="quote-text">"Loading today's special thought..."</p>
+                <p id="daily-wish" class="quote-wish"></p>
+            </div>
+        </div>
+
+        <div class="scratch-card-section">
+            <h2>Today's Surprise</h2>
+            <p>Scratch to reveal your special link!</p>
+            <div class="scratch-card-container">
+                <div class="scratch-content">
+                    <a href="https://docs.google.com/document/d/1PbuN1YXV4JgnfFt7PGJNgP0RzzCfqIT3nqp6bINcTyM/edit?usp=sharing" target="_blank" class="surprise-link">Click here for your daily surprise! 🎁</a>
+                </div>
+                <canvas id="scratch-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
