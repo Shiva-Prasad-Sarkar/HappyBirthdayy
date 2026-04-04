@@ -1,0 +1,385 @@
+body {
+    margin: 0;
+    padding: 3rem 1rem;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #1a0b2e, #4b1d52, #e53935);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    animation: fadeIn 2s ease-in-out;
+    z-index: 10;
+    position: relative;
+    max-width: 90vw;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.title {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: 2rem;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.countdown-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.time-box {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 1.5rem;
+    border-radius: 15px;
+    min-width: 80px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.time-box:hover {
+    transform: translateY(-5px);
+}
+
+.time-box span {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    display: block;
+    color: #ff9a9e;
+}
+
+.time-box p {
+    margin: 0;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fecfef;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.greeting h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(3rem, 6vw, 5rem);
+    color: #ffd700;
+    animation: popIn 1s ease-out forwards;
+}
+
+.greeting p {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    animation: fadeIn 2s ease-in-out 1s forwards;
+    opacity: 0;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Confetti animation */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: fall linear forwards;
+    z-index: 1;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+    }
+}
+
+/* Timeline Progress Animation */
+.timeline-container {
+    margin-top: 3rem;
+    padding: 1rem 0;
+    width: 90%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeIn 2s ease-in-out forwards;
+}
+
+.timeline-track {
+    position: relative;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.timeline-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #ff9a9e, #fecfef);
+    border-radius: 10px;
+    width: 0%;
+    transition: width 1.5s ease-in-out;
+    box-shadow: 0 0 10px rgba(254, 207, 239, 0.8);
+}
+
+.timeline-girl {
+    position: absolute;
+    top: -45px; /* sit higher on top of the line */
+    left: 0%;
+    font-size: 3.5rem; /* slightly bigger */
+    transform: translateX(-50%);
+    transition: left 1.5s ease-in-out;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+    z-index: 5;
+    animation: walkBounce 0.5s infinite alternate ease-in-out;
+}
+
+@keyframes walkBounce {
+    0% { transform: translate(-50%, 0) rotate(-5deg); }
+    100% { transform: translate(-50%, -10px) rotate(5deg); }
+}
+
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 600;
+    color: #fecfef;
+    margin-top: 2rem; /* Give space for girl to bounce */
+}
+
+.timeline-message {
+    margin-top: 1rem;
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    color: #ffd700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Daily Quote Section */
+.daily-quote-section {
+    margin-top: 3rem;
+    animation: fadeIn 2.5s ease-in-out;
+}
+
+.quote-card {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2rem;
+    border-radius: 12px;
+    border-left: 5px solid #ffd700;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.quote-card::before {
+    content: "❝";
+    font-family: 'Dancing Script', cursive;
+    font-size: 5rem;
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    opacity: 0.1;
+    color: #ffd700;
+}
+
+.quote-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.quote-wish {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    font-weight: 300;
+    margin: 0;
+    color: #fecfef;
+    text-align: right;
+    font-style: italic;
+}
+
+/* Scratch Card Section */
+.scratch-card-section {
+    margin-top: 3rem;
+    animation: fadeIn 3s ease-in-out;
+}
+
+.scratch-card-section h2 {
+    font-family: 'Dancing Script', cursive;
+    color: #ffd700;
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 0.5rem;
+}
+
+.scratch-card-section p {
+    margin-bottom: 1.5rem;
+    color: #fecfef;
+}
+
+.scratch-card-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.scratch-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.surprise-link {
+    font-weight: 600;
+    color: #4b1d52;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .container {
+        padding: 1.5rem;
+    }
+
+    .timeline-container {
+        width: 85%; /* extra space for the girl */
+    }
+
+    .timeline-girl {
+        font-size: 2.5rem;
+        top: -35px;
+    }
+}
+
+.surprise-link:hover {
+    transform: scale(1.05);
+    color: #e53935;
+}
+
+#scratch-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    cursor: crosshair;
+}
+
+/* --- Mobile View Optimizations --- */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0.5rem;
+    }
+
+    .container {
+        padding: 1.5rem 1rem;
+        max-width: 95vw;
+        border-radius: 15px;
+    }
+
+    .countdown-container {
+        gap: 0.8rem;
+    }
+
+    .time-box {
+        padding: 1rem;
+        min-width: 65px;
+        flex: 1 1 40%; /* let them wrap cleanly in rows of 2 on very small screens */
+    }
+
+    .time-box span {
+        font-size: 2.2rem;
+    }
+
+    .timeline-container {
+        margin-top: 2.5rem;
+        padding: 0 1rem;
+        max-width: 100%;
+    }
+
+    .timeline-girl {
+        font-size: 2.8rem;
+        top: -35px;
+    }
+
+    .scratch-card-container {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .daily-quote-section {
+        margin-top: 2rem;
+    }
+    
+    .quote-card {
+        padding: 1.5rem;
+    }
+
+    .surprise-link {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .time-box {
+        padding: 0.8rem;
+        min-width: 60px;
+    }
+
+    .time-box p {
+        letter-spacing: 1px;
+    }
+}
