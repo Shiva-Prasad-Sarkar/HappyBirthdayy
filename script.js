@@ -266,7 +266,133 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeline();
     updateDailyQuote();
     setupScratchCard();
+    createFallingElements();
+    startCannons();
     
     // Update every second
     setInterval(updateCountdown, 1000);
+
+    // Loading Screen
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+        }
+    }, 3000);
+
+    // Falling Pearls & Petals
+    function createFallingElements() {
+        const container = document.getElementById('falling-elements');
+        if (!container) return;
+
+        const types = ['pearl', 'petal'];
+        
+        setInterval(() => {
+            const el = document.createElement('div');
+            const type = types[Math.floor(Math.random() * types.length)];
+            el.classList.add(type);
+            
+            el.style.left = Math.random() * 100 + 'vw';
+            const duration = Math.random() * 6 + 4; // 4s to 10s
+            el.style.animationDuration = duration + 's';
+            
+            // Random sizes
+            const size = Math.random() * 15 + 10;
+            if (type === 'petal') {
+                el.style.width = size + 'px';
+                el.style.height = size + 'px';
+            } else { // pearl
+                el.style.width = (size * 0.6) + 'px';
+                el.style.height = (size * 0.6) + 'px';
+            }
+
+            container.appendChild(el);
+            
+            setTimeout(() => {
+                el.remove();
+            }, duration * 1000);
+        }, 300); // create a new element every 300ms
+    }
+
+    // Bottom Corner Cannons
+    function startCannons() {
+        const container = document.getElementById('cannon-particles');
+        if (!container) return;
+
+        const emojis = ['🌸', '🌺', '🌼', '✨', '🎉', '💖'];
+
+        function shootParticle(side) {
+            const particle = document.createElement('div');
+            particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            particle.classList.add('cannon-particle');
+            
+            // Base positioning (near the cannon muzzles)
+            if (side === 'left') {
+                particle.style.left = '60px'; // near left cannon barrel
+                particle.style.bottom = '80px';
+            } else {
+                particle.style.right = '60px'; // near right cannon barrel
+                particle.style.bottom = '80px';
+            }
+
+            // Calculate varied trajectory
+            const horizontalForce = side === 'left' ? (Math.random() * 40 + 20) : -(Math.random() * 40 + 20); // 20vw to 60vw inwards
+            const verticalForce = -(Math.random() * 50 + 50); // -50vh to -100vh upwards
+            const rotation = Math.random() * 360 + 360;
+
+            particle.style.setProperty('--tx', `${horizontalForce}vw`);
+            particle.style.setProperty('--ty', `${verticalForce}vh`);
+            particle.style.setProperty('--rot', `${rotation}deg`);
+
+            // Random size
+            const size = Math.random() * 1.5 + 1; // 1rem to 2.5rem
+            particle.style.fontSize = `${size}rem`;
+
+            container.appendChild(particle);
+
+            // Remove particle after animation ends
+            setTimeout(() => {
+                particle.remove();
+            }, 3000);
+        }
+
+        // Click on cannon triggers burst and shows cake model
+        const leftCannon = document.getElementById('cannon-left');
+        const rightCannon = document.getElementById('cannon-right');
+        const cakeModal = document.getElementById('cake-modal');
+        const closeCake = document.getElementById('close-cake');
+
+        function cannonClick(side) {
+            // Burst 20 flowers instantly
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => shootParticle(side), i * 50);
+            }
+            // Show the cake modal after a short delay
+            setTimeout(() => {
+                cakeModal.classList.remove('hidden');
+            }, 500);
+        }
+
+        if (leftCannon) {
+            leftCannon.addEventListener('click', () => cannonClick('left'));
+        }
+        if (rightCannon) {
+            rightCannon.addEventListener('click', () => cannonClick('right'));
+        }
+
+        if (closeCake) {
+            closeCake.addEventListener('click', () => {
+                cakeModal.classList.add('hidden');
+            });
+        }
+        // Click outside of modal content to close
+        window.addEventListener('click', (e) => {
+            if (e.target === cakeModal) {
+                cakeModal.classList.add('hidden');
+            }
+        });
+    }
 });

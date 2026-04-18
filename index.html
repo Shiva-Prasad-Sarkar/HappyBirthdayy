@@ -9,6 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Custom Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <h2 class="loading-text">Something special is loading for someone very special…</h2>
+    </div>
+
+    <!-- Falling Animation Container -->
+    <div id="falling-elements" class="falling-elements"></div>
+
     <div class="container">
         <h1 class="title">Countdown to a Very Special Birthday!</h1>
         <div id="countdown" class="countdown-container">
@@ -54,6 +62,38 @@
             </div>
         </div>
 
+        <!-- Glowing Candle -->
+        <div class="glowing-candle">
+            <svg class="real-candle-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="flameGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#fff5cc" stop-opacity="1" />
+                        <stop offset="50%" stop-color="#ffb703" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="#ffb703" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+                <!-- Candle Glow Aura -->
+                <circle cx="100" cy="50" r="40" fill="url(#flameGlow)" class="candle-aura"/>
+                
+                <!-- Candle Body -->
+                <rect x="80" y="80" width="40" height="100" rx="5" fill="#fdfbf7" stroke="#e0e0e0" stroke-width="1"/>
+                
+                <!-- Melted wax details -->
+                <path d="M 80 85 Q 90 95 95 85 Q 105 100 110 85 Q 115 90 120 85 L 120 80 L 80 80 Z" fill="#fdfbf7" stroke="#e0e0e0" stroke-width="1"/>
+                <path d="M 83 85 L 83 105 Q 85 110 87 105 L 87 88" fill="#fdfbf7" />
+                <path d="M 112 85 L 112 115 Q 114 120 116 115 L 116 88" fill="#fdfbf7" />
+                
+                <!-- Wick -->
+                <path d="M 100 80 Q 98 75 102 70" fill="none" stroke="#2c3e50" stroke-width="3" stroke-linecap="round"/>
+                
+                <!-- Flame -->
+                <path d="M 100 35 Q 115 60 102 70 Q 85 60 100 35 Z" fill="#ffb703" class="candle-flame"/>
+                <!-- Inner Flame -->
+                <path d="M 100 45 Q 108 60 102 68 Q 92 60 100 45 Z" fill="#ffea00"/>
+            </svg>
+            <span class="candle-text">you will alwys glow like this</span>
+        </div>
+
         <div class="scratch-card-section">
             <h2>Today's Surprise</h2>
             <p>Scratch to reveal your special link!</p>
@@ -65,6 +105,111 @@
             </div>
         </div>
     </div>
+
+    <!-- Bottom Corner Cannons -->
+    <div class="bottom-cannons">
+        <div class="cannon cannon-left" id="cannon-left">
+            <svg class="real-cannon-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Back Wheel Base -->
+                <circle cx="60" cy="140" r="25" fill="#3e2723" stroke="#2a1a17" stroke-width="4"/>
+                <!-- Inner Cannon Barrel -->
+                <path d="M40,130 L140,50 L160,70 L60,150 Z" fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+                <!-- Barrel details (metal rings) -->
+                <line x1="75" y1="95" x2="95" y2="115" stroke="#1a252f" stroke-width="6" stroke-linecap="round"/>
+                <line x1="105" y1="65" x2="125" y2="85" stroke="#1a252f" stroke-width="6" stroke-linecap="round"/>
+                <!-- Muzzle Lip -->
+                <ellipse cx="150" cy="60" rx="6" ry="18" fill="#1a252f" transform="rotate(45 150 60)"/>
+                <!-- Front Wooden Wheel -->
+                <circle cx="75" cy="150" r="30" fill="#5d4037" stroke="#3e2723" stroke-width="6"/>
+                <!-- Wheel Spokes -->
+                <line x1="75" y1="120" x2="75" y2="180" stroke="#3e2723" stroke-width="4"/>
+                <line x1="45" y1="150" x2="105" y2="150" stroke="#3e2723" stroke-width="4"/>
+                <line x1="54" y1="129" x2="96" y2="171" stroke="#3e2723" stroke-width="4"/>
+                <line x1="96" y1="129" x2="54" y2="171" stroke="#3e2723" stroke-width="4"/>
+                <!-- Wheel Hubcap -->
+                <circle cx="75" cy="150" r="8" fill="#d7ccc8" stroke="#1a0b2e" stroke-width="2"/>
+            </svg>
+        </div>
+        <div class="cannon cannon-right" id="cannon-right">
+            <svg class="real-cannon-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Back Wheel Base -->
+                <circle cx="60" cy="140" r="25" fill="#3e2723" stroke="#2a1a17" stroke-width="4"/>
+                <!-- Inner Cannon Barrel -->
+                <path d="M40,130 L140,50 L160,70 L60,150 Z" fill="#2c3e50" stroke="#1a252f" stroke-width="3"/>
+                <!-- Barrel details (metal rings) -->
+                <line x1="75" y1="95" x2="95" y2="115" stroke="#1a252f" stroke-width="6" stroke-linecap="round"/>
+                <line x1="105" y1="65" x2="125" y2="85" stroke="#1a252f" stroke-width="6" stroke-linecap="round"/>
+                <!-- Muzzle Lip -->
+                <ellipse cx="150" cy="60" rx="6" ry="18" fill="#1a252f" transform="rotate(45 150 60)"/>
+                <!-- Front Wooden Wheel -->
+                <circle cx="75" cy="150" r="30" fill="#5d4037" stroke="#3e2723" stroke-width="6"/>
+                <!-- Wheel Spokes -->
+                <line x1="75" y1="120" x2="75" y2="180" stroke="#3e2723" stroke-width="4"/>
+                <line x1="45" y1="150" x2="105" y2="150" stroke="#3e2723" stroke-width="4"/>
+                <line x1="54" y1="129" x2="96" y2="171" stroke="#3e2723" stroke-width="4"/>
+                <line x1="96" y1="129" x2="54" y2="171" stroke="#3e2723" stroke-width="4"/>
+                <!-- Wheel Hubcap -->
+                <circle cx="75" cy="150" r="8" fill="#d7ccc8" stroke="#1a0b2e" stroke-width="2"/>
+            </svg>
+        </div>
+    </div>
+    
+    <!-- Cannon Particles Container -->
+    <div id="cannon-particles" class="cannon-particles"></div>
+
+    <!-- Cake Modal overlay -->
+    <div id="cake-modal" class="cake-modal hidden">
+        <div class="cake-modal-content">
+            <span id="close-cake" class="close-btn">&times;</span>
+            <div class="cake-container">
+                <svg viewBox="0 0 200 200" width="180" height="180" xmlns="http://www.w3.org/2000/svg" class="special-cake-svg">
+                    <!-- Glow around cake -->
+                    <defs>
+                        <radialGradient id="cakeGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="rgba(255, 215, 0, 0.4)" />
+                            <stop offset="100%" stop-color="transparent" />
+                        </radialGradient>
+                    </defs>
+                    <circle cx="100" cy="120" r="80" fill="url(#cakeGlow)" class="cake-glow-pulse" />
+
+                    <!-- Plate -->
+                    <ellipse cx="100" cy="180" rx="80" ry="15" fill="#a4b0be" />
+                    <ellipse cx="100" cy="177" rx="80" ry="15" fill="#f1f2f6" />
+                    
+                    <!-- Bottom Tier -->
+                    <path d="M30 170 Q30 182 100 182 Q170 182 170 170 L170 120 Q170 132 100 132 Q30 132 30 120 Z" fill="#ff9ff3"/>
+                    <ellipse cx="100" cy="120" rx="70" ry="12" fill="#fca5f1" />
+                    
+                    <!-- Middle Tier -->
+                    <path d="M45 120 Q45 132 100 132 Q155 132 155 120 L155 70 Q155 82 100 82 Q45 82 45 70 Z" fill="#feca57"/>
+                    <ellipse cx="100" cy="70" rx="55" ry="10" fill="#fbd277"/>
+                    
+                    <!-- Frosting Drips (Bottom) -->
+                    <path d="M30 120 Q40 145 50 120 Q60 140 70 120 Q80 150 90 120 Q100 135 110 120 Q120 145 130 120 Q140 140 150 120 Q160 145 170 120 Z" fill="#fff" />
+                    
+                    <!-- Frosting Drips (Middle) -->
+                    <path d="M45 70 Q55 90 65 70 Q75 85 85 70 Q95 100 105 70 Q115 85 125 70 Q135 95 145 70 Q150 80 155 70 Z" fill="#fff" />
+                    
+                    <!-- Candle Base -->
+                    <rect x="95" y="30" width="10" height="40" fill="#48dbfb"/>
+                    <rect x="95" y="40" width="10" height="5" fill="#e056fd" transform="rotate(10 100 42)"/>
+                    <rect x="95" y="50" width="10" height="5" fill="#e056fd" transform="rotate(10 100 52)"/>
+                    <rect x="95" y="60" width="10" height="5" fill="#e056fd" transform="rotate(10 100 62)"/>
+                    
+                    <!-- Wick -->
+                    <path d="M100 30 Q97 25 102 20" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                    
+                    <!-- Flame -->
+                    <g class="cake-animated-flame">
+                        <path d="M100 5 Q115 15 102 20 Q85 15 100 5 Z" fill="#ffb703"/>
+                        <path d="M100 12 Q108 17 102 20 Q92 17 100 12 Z" fill="#ffea00"/>
+                    </g>
+                </svg>
+            </div>
+            <p class="cake-message">This special cake will be cut on May 1st! ✨</p>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
