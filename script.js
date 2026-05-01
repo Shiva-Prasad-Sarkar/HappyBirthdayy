@@ -17,42 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const hoursEl = document.getElementById('hours');
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
-    const countdownEl = document.getElementById('countdown');
+    const countdownEl = document.getElementById('flower-display');
     const greetingEl = document.getElementById('greeting');
     const titleEl = document.querySelector('.title');
     let confettiInterval;
 
     function updateDivs(days, hours, minutes, seconds) {
-        daysEl.innerText = days.toString().padStart(2, '0');
-        hoursEl.innerText = hours.toString().padStart(2, '0');
-        minutesEl.innerText = minutes.toString().padStart(2, '0');
-        secondsEl.innerText = seconds.toString().padStart(2, '0');
+        // Obsolete
     }
 
     function updateCountdown() {
-        const currentTime = new Date().getTime();
-        const difference = targetDate.getTime() - currentTime;
-
-        // If the date is today (May 1st)
-        const currentNow = new Date();
-        if (currentNow.getMonth() === 4 && currentNow.getDate() === 1) {
-            countdownEl.classList.add('hidden');
-            titleEl.classList.add('hidden');
-            greetingEl.classList.remove('hidden');
-            
-            if (!confettiInterval) {
-                createConfetti();
-                confettiInterval = setInterval(createConfetti, 2000);
-            }
-            return;
+        // Start confetti instantly since it's May 1st!
+        if (!confettiInterval) {
+            createConfetti();
+            confettiInterval = setInterval(createConfetti, 2000);
         }
-
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-        updateDivs(days, hours, minutes, seconds);
     }
 
     function updateTimeline() {
@@ -359,21 +338,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 3000);
         }
 
-        // Click on cannon triggers burst and shows cake model
+        // Click on cannon triggers burst
         const leftCannon = document.getElementById('cannon-left');
         const rightCannon = document.getElementById('cannon-right');
-        const cakeModal = document.getElementById('cake-modal');
-        const closeCake = document.getElementById('close-cake');
 
         function cannonClick(side) {
             // Burst 20 flowers instantly
             for (let i = 0; i < 20; i++) {
                 setTimeout(() => shootParticle(side), i * 50);
             }
-            // Show the cake modal after a short delay
-            setTimeout(() => {
-                cakeModal.classList.remove('hidden');
-            }, 500);
         }
 
         if (leftCannon) {
@@ -382,17 +355,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rightCannon) {
             rightCannon.addEventListener('click', () => cannonClick('right'));
         }
-
-        if (closeCake) {
-            closeCake.addEventListener('click', () => {
-                cakeModal.classList.add('hidden');
+        
+        // Interactive Cake logic
+        const interactiveCake = document.getElementById('interactive-cake-btn');
+        if (interactiveCake) {
+            interactiveCake.addEventListener('click', () => {
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => shootParticle(Math.random() > 0.5 ? 'left' : 'right'), i * 30);
+                }
+                const msg = document.querySelector('.timeline-message.pulse-text');
+                if(msg) msg.innerText = "YAY! Happy Birthday! 🎉💖";
             });
         }
-        // Click outside of modal content to close
-        window.addEventListener('click', (e) => {
-            if (e.target === cakeModal) {
-                cakeModal.classList.add('hidden');
-            }
-        });
     }
 });
