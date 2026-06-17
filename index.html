@@ -108,11 +108,16 @@ window.BDAY_CONFIG = {
         <p class="timeline-message" id="timeline-message">Walking towards your special day...</p>
     </div>
 
-    <!-- Personal message -->
+    <!-- Personal message — letter design -->
     <div id="personal-msg-section" class="personal-msg-section" style="display:none;">
-        <div class="msg-card">
-            <p class="personal-msg-text" id="personal-msg-text"></p>
-            <p class="msg-from" id="msg-from"></p>
+        <h2 class="section-label">💌 A Letter For You</h2>
+        <div class="letter-wrap">
+            <div class="letter-paper">
+                <p class="letter-dear" id="letter-to-name">Dear Friend,</p>
+                <p class="personal-msg-text" id="personal-msg-text"></p>
+                <p class="msg-from" id="msg-from">— Someone Special</p>
+                <span class="letter-watermark">💌</span>
+            </div>
         </div>
     </div>
 
@@ -154,7 +159,7 @@ window.BDAY_CONFIG = {
 
     <!-- Create your own -->
     <div class="create-own-section">
-        <p style="color:#fecfef;margin-bottom:1rem;">Want to create a wish like this for someone you love?</p>
+        <p style="color:#fecfef;margin-bottom:1.2rem;font-size:clamp(.85rem,2.5vw,1rem);">Want to create a wish like this for someone you love?</p>
         <a href="customize.html" class="create-own-btn">🎨 Create Your Own Birthday Wish →</a>
     </div>
 </div>

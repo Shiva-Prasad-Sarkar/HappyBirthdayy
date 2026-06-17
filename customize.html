@@ -129,6 +129,7 @@ body{
     -webkit-tap-highlight-color:transparent;
 }
 .tpl-card:hover .tpl-use,.tpl-card:focus .tpl-use{opacity:1}
+@media(hover:none){.tpl-use{opacity:1}}
 .tpl-ok{color:#00f2fe;font-size:.76rem;font-weight:600;margin-top:.4rem;display:none}
 
 /* ── Action buttons ───────────────────────────────────────── */
@@ -291,12 +292,6 @@ ol.steps{list-style:none;counter-reset:s}
         <p class="hint">Upload a photo free at <a href="https://imgur.com" target="_blank">imgur.com</a> → right-click the image → Copy image address → paste here.</p>
     </div>
 
-    <div class="fg">
-        <label>🎵 Background Music URL <span class="opt">(optional — MP3 link)</span></label>
-        <input type="url" id="inp-music" placeholder="https://example.com/song.mp3" inputmode="url" oninput="liveUpdate()">
-        <p class="hint">Free music: <a href="https://pixabay.com/music/" target="_blank">pixabay.com/music</a> — click a song → Download → copy the link.</p>
-    </div>
-
     <div class="sec-lbl">🎨 Color Theme</div>
     <div class="theme-grid">
         <label class="th-opt"><input type="radio" name="theme" value="purple" checked onchange="liveUpdate()"><div class="th-sw t-purple">💜<span class="th-nm">Purple</span></div></label>
@@ -399,7 +394,6 @@ function getConfig(){
         msg:   document.getElementById('inp-msg').value.trim(),
         link:  document.getElementById('inp-link').value.trim(),
         photo: document.getElementById('inp-photo').value.trim(),
-        music: document.getElementById('inp-music').value.trim(),
         theme: document.querySelector('input[name="theme"]:checked').value
     };
 }
@@ -417,7 +411,6 @@ function buildURL(cfg){
     if(cfg.msg)   p.set('msg',cfg.msg);
     if(cfg.link)  p.set('link',cfg.link);
     if(cfg.photo) p.set('photo',cfg.photo);
-    if(cfg.music) p.set('music',cfg.music);
     if(cfg.theme && cfg.theme!=='purple') p.set('theme',cfg.theme);
     return base+'?'+p.toString();
 }

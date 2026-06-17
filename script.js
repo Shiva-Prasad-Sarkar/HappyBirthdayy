@@ -113,22 +113,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('music-section').style.display = '';
     }
 
-    // ── Surprise link ─────────────────────────────────────────
-    const linkEl = document.getElementById('surprise-link');
-    if (link) {
-        linkEl.href = link;
-        linkEl.textContent = '🎁 Click for your special surprise!';
+    // ── Surprise link (only shown when a link is provided) ───
+    const scratchSection = document.querySelector('.scratch-card-section');
+    if (!link) {
+        if (scratchSection) scratchSection.style.display = 'none';
     } else {
-        linkEl.textContent = `🎊 Happy Birthday, ${to}! 🎊`;
-        linkEl.removeAttribute('href');
-        linkEl.style.cursor = 'default';
+        const linkEl = document.getElementById('surprise-link');
+        linkEl.href   = link;
+        linkEl.target = '_blank';
+        linkEl.rel    = 'noopener noreferrer';
+        linkEl.textContent = '🎁 Tap here to open your surprise!';
     }
 
-    // ── Personal message ─────────────────────────────────────
+    // ── Personal message — letter ─────────────────────────────
     if (msg) {
+        const dearEl = document.getElementById('letter-to-name');
+        if (dearEl) dearEl.textContent = `Dear ${to},`;
         document.getElementById('personal-msg-text').textContent = msg;
         document.getElementById('msg-from').textContent = `— ${from}`;
-        document.getElementById('personal-msg-section').style.display = '';
+        document.getElementById('personal-msg-section').style.display = 'block';
     }
 
     // ── Timeline ──────────────────────────────────────────────
