@@ -449,7 +449,9 @@ async function downloadFiles(){
         if(!r1.ok||!r2.ok||!r3.ok) throw new Error('fetch');
         const[css,js,html]=await Promise.all([r1.text(),r2.text(),r3.text()]);
         const block=`<!-- BDAY_CONFIG_START -->\n<script>\nwindow.BDAY_CONFIG = ${JSON.stringify(cfg,null,4)};\n<\/script>\n<!-- BDAY_CONFIG_END -->`;
-        const modHtml=html.replace(/<!-- BDAY_CONFIG_START -->[\s\S]*?<!-- BDAY_CONFIG_END -->/,block);
+        const modHtml=html
+            .replace(/<!-- BDAY_CONFIG_START -->[\s\S]*?<!-- BDAY_CONFIG_END -->/,block)
+            .replace('href="customize.html"','href="https://shiva-prasad-sarkar.github.io/HappyBirthdayy/customize.html"');
         const slug=cfg.to.toLowerCase().replace(/[^a-z0-9]/g,'-');
         const info=['=== Birthday Wish for '+cfg.to+' ===','',
             'Keep all 3 files (index.html, style.css, script.js) in the same folder.','',
