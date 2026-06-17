@@ -1,371 +1,343 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Set the target date to May 1st
+// ─── Read configuration from URL params or BDAY_CONFIG block ───
+(function applyConfig() {
+    const p   = new URLSearchParams(window.location.search);
+    const cfg = window.BDAY_CONFIG || {};
+
+    const to     = p.get('to')     || cfg.to     || 'Friend';
+    const from   = p.get('from')   || cfg.from   || 'Someone Special';
+    const bday   = p.get('bday')   || cfg.bday   || '05-01';
+    const msg    = p.get('msg')    || cfg.msg    || '';
+    const link   = p.get('link')   || cfg.link   || '';
+    const theme  = p.get('theme')  || cfg.theme  || 'purple';
+    const gender = p.get('gender') || cfg.gender || 'female';
+    const rel    = p.get('rel')    || cfg.rel    || 'friend';
+    const age    = p.get('age')    || cfg.age    || '';
+    const photo  = p.get('photo')  || cfg.photo  || '';
+    const music  = p.get('music')  || cfg.music  || '';
+
+    // Apply theme
+    if (theme !== 'purple') document.documentElement.setAttribute('data-theme', theme);
+    // Apply gender to body for CSS overrides (always — only male/female supported)
+    document.body.setAttribute('data-gender', gender === 'male' ? 'male' : 'female');
+
+    // Parse birthday MM-DD
+    const [bdMonth, bdDay] = bday.split('-').map(Number);
     const now = new Date();
-    let targetYear = now.getFullYear();
-    let targetDate = new Date(targetYear, 4, 1); // Month is 0-indexed, so 4 is May
+    let targetDate = new Date(now.getFullYear(), bdMonth - 1, bdDay);
+    if (now > targetDate) targetDate = new Date(now.getFullYear() + 1, bdMonth - 1, bdDay);
 
-    // If today is past May 1st of the current year, set the target to next year's May 1st
-    if (now.getTime() > targetDate.getTime() && now.getDate() !== 1) {
-        targetYear++;
-        targetDate = new Date(targetYear, 4, 1);
-    } else if (now.getMonth() === 4 && now.getDate() === 1) {
-        // Today is the birthday!
-        targetDate = now;
+    document.title = `🎂 Happy Birthday, ${to}!`;
+    window._BD = { to, from, msg, link, theme, gender, rel, age: parseInt(age)||0, photo, music, targetDate, bdMonth, bdDay };
+})();
+
+// ─── Main ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const { to, from, msg, link, gender, rel, age, photo, music, targetDate, bdMonth, bdDay } = window._BD;
+    const now = new Date();
+
+    // ── Gender-based settings ─────────────────────────────────
+    const genderData = {
+        female: {
+            walker:       '👸',
+            flowers:      ['🌸','🌺','🌹','💐'],
+            cannonEmojis: ['🌸','🌺','🌹','🌷','💖','💐','👑','✨','💅','🎀'],
+            hearts:       ['💕','💖','💗','💝','🌸','💞'],
+            sparkles:     ['✨','💫','🌟','💖','🌸'],
+            loadingTxt:   `A queen's celebration is loading... 👑`,
+            candleTxt:    `${to}, shine bright like the queen you are! 👑✨`,
+            cakeTxt:      `Happy Birthday, princess ${to}! The world is yours! 🌸💖`
+        },
+        male: {
+            walker:       '🤴',
+            flowers:      ['⭐','🌟','💫','✨'],
+            cannonEmojis: ['⭐','🏆','🎮','🎸','🔥','💪','🎉','🚀','🌟','🎊'],
+            hearts:       ['⭐','🌟','💫','✨','🔥','🚀'],
+            sparkles:     ['⭐','💫','🌟','✨','🎯'],
+            loadingTxt:   `Celebrating a legend... 🏆`,
+            candleTxt:    `${to}, keep shining — you're a legend! 🔥🏆`,
+            cakeTxt:      `Happy Birthday, ${to}! The world needs more people like you! 🏆🎉`
+        },
+    };
+    const gd = genderData[gender] || genderData.female;
+
+    // ── Relationship-based messages ───────────────────────────
+    const relData = {
+        mom:     { label:'Mom',       icon:'👩', timelineReach:`You made it, Mom! Happy Birthday to the world's best! 🌹💖` },
+        dad:     { label:'Dad',       icon:'👨', timelineReach:`Happy Birthday, Dad! You're our hero! 🏆` },
+        gf:      { label:'Girlfriend',icon:'💕', timelineReach:`You made it, my love! Happy Birthday! 🌹💕` },
+        bf:      { label:'Boyfriend', icon:'💙', timelineReach:`Happy Birthday to my favorite person! 💙⭐` },
+        friend:  { label:'Best Friend',icon:'🤝', timelineReach:`YAY! ${to}'s birthday is here! LET'S CELEBRATE! 🎊🥳` },
+        brother: { label:'Brother',   icon:'👦', timelineReach:`Happy Birthday, bro! You're a legend! 💪🏆` },
+        sister:  { label:'Sister',    icon:'👧', timelineReach:`Happy Birthday, sis! You're amazing! 🌸💖` },
+        teacher: { label:'Teacher',   icon:'📚', timelineReach:`Happy Birthday! Thank you for everything! 🌟` },
+        other:   { label:'Friend',    icon:'🎉', timelineReach:`Wishing you a magical birthday, ${to}! 🎉✨` }
+    };
+    const rd = relData[rel] || relData.other;
+
+    // ── Apply dynamic text ────────────────────────────────────
+    document.getElementById('main-title').textContent   = `🎉 Happy Birthday, ${to}! 🎉`;
+    document.getElementById('loading-text').textContent = gd.loadingTxt;
+    document.getElementById('candle-text').textContent  = gd.candleTxt;
+    document.getElementById('cake-modal-message').textContent = gd.cakeTxt;
+    document.getElementById('cake-prompt').textContent  = `${to}, please cut the cake! 🎂`;
+
+    // ── Flower emojis (gender-based) ──────────────────────────
+    gd.flowers.forEach((emoji, i) => {
+        const el = document.getElementById('flower-' + (i + 1));
+        if (el) el.textContent = emoji;
+    });
+
+    // ── Timeline walker ───────────────────────────────────────
+    document.getElementById('timeline-girl').textContent = gd.walker;
+
+    // ── Age badge ─────────────────────────────────────────────
+    if (age > 0) {
+        const badge = document.getElementById('age-badge');
+        badge.textContent = `🎂 Turning ${age} today!`;
+        badge.style.display = 'inline-block';
     }
 
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-    const countdownEl = document.getElementById('flower-display');
-    const greetingEl = document.getElementById('greeting');
-    const titleEl = document.querySelector('.title');
-    let confettiInterval;
-
-    function updateDivs(days, hours, minutes, seconds) {
-        // Obsolete
+    // ── Photo ─────────────────────────────────────────────────
+    if (photo) {
+        const img = document.getElementById('birthday-photo');
+        img.src = photo;
+        img.onerror = () => { document.getElementById('photo-section').style.display = 'none'; };
+        document.getElementById('photo-caption').textContent = `Happy Birthday, ${to}! 🎂`;
+        document.getElementById('photo-section').style.display = '';
     }
 
-    function updateCountdown() {
-        // Start confetti instantly since it's May 1st!
-        if (!confettiInterval) {
-            createConfetti();
-            confettiInterval = setInterval(createConfetti, 2000);
-        }
+    // ── Music ─────────────────────────────────────────────────
+    if (music) {
+        document.getElementById('music-src').src = music;
+        document.getElementById('bg-music').load();
+        document.getElementById('music-section').style.display = '';
     }
+
+    // ── Surprise link ─────────────────────────────────────────
+    const linkEl = document.getElementById('surprise-link');
+    if (link) {
+        linkEl.href = link;
+        linkEl.textContent = '🎁 Click for your special surprise!';
+    } else {
+        linkEl.textContent = `🎊 Happy Birthday, ${to}! 🎊`;
+        linkEl.removeAttribute('href');
+        linkEl.style.cursor = 'default';
+    }
+
+    // ── Personal message ─────────────────────────────────────
+    if (msg) {
+        document.getElementById('personal-msg-text').textContent = msg;
+        document.getElementById('msg-from').textContent = `— ${from}`;
+        document.getElementById('personal-msg-section').style.display = '';
+    }
+
+    // ── Timeline ──────────────────────────────────────────────
+    const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const startDate = new Date(targetDate.getFullYear(), targetDate.getMonth() - 1, targetDate.getDate());
+    document.getElementById('timeline-start-date').textContent = `${shortMonths[startDate.getMonth()]} ${startDate.getDate()}`;
+    document.getElementById('timeline-end-date').textContent   = `${shortMonths[targetDate.getMonth()]} ${targetDate.getDate()}`;
 
     function updateTimeline() {
-        const girl = document.getElementById('timeline-girl');
-        const progress = document.getElementById('timeline-progress');
-        const startDate = new Date(targetDate.getFullYear(), 3, 1); // April 1st of the target year
-        const totalDuration = targetDate.getTime() - startDate.getTime();
-        const currentTime = new Date().getTime() - startDate.getTime();
-
-        let percentage = (currentTime / totalDuration) * 100;
-        
-        // Clamp percentage between 0 and 100
-        if (percentage < 0) percentage = 0;
-        if (percentage > 100) percentage = 100;
-
-        // Apply smooth transition CSS
+        const elapsed = now - startDate;
+        const total   = targetDate - startDate;
+        const pct     = Math.min(100, Math.max(0, (elapsed / total) * 100));
         setTimeout(() => {
-            girl.style.left = `${percentage}%`;
-            progress.style.width = `${percentage}%`;
+            document.getElementById('timeline-girl').style.left     = `${pct}%`;
+            document.getElementById('timeline-progress').style.width = `${pct}%`;
         }, 500);
-
-        const timelineMessage = document.getElementById('timeline-message');
-        if (percentage >= 100) {
-            girl.style.animation = 'none'; // Stop walking animation
-            timelineMessage.innerText = "You made it! Happy Birthday! 🎉";
-        } else if (percentage > 80) {
-            timelineMessage.innerText = "Almost there, getting so close! 🏃‍♀️✨";
-        } else if (percentage > 50) {
-            timelineMessage.innerText = "Halfway to the best day of the year! 🌸";
-        } else {
-            timelineMessage.innerText = "Walking towards your special day... 👧🏻";
-        }
+        const msgEl = document.getElementById('timeline-message');
+        if (pct >= 100)    msgEl.textContent = rd.timelineReach;
+        else if (pct > 80) msgEl.textContent = `Almost there — so close now! 🏃‍♀️✨`;
+        else if (pct > 50) msgEl.textContent = `Halfway to the best day of the year! 🌸`;
+        else               msgEl.textContent = `Walking towards your special day... ${gd.walker}`;
     }
+    updateTimeline();
 
+    // ── Confetti ──────────────────────────────────────────────
     function createConfetti() {
-        const colors = ['#fce18a', '#ff726d', '#b48def', '#f4306d', '#ffd700', '#00ff00', '#00ffff'];
+        const colors = ['#fce18a','#ff726d','#b48def','#f4306d','#ffd700','#00ff00','#00ffff','#ff9a9e'];
         for (let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.classList.add('confetti');
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            // Randomize size and animation
+            const el = document.createElement('div');
+            el.classList.add('confetti');
+            el.style.left = Math.random() * 100 + 'vw';
+            el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             const size = Math.random() * 8 + 5;
-            confetti.style.width = size + 'px';
-            confetti.style.height = size + 'px';
-            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-            
-            const duration = Math.random() * 3 + 2;
-            confetti.style.animationDuration = duration + 's';
-            
-            document.body.appendChild(confetti);
-            
-            // Cleanup confetti after it falls
-            setTimeout(() => {
-                confetti.remove();
-            }, duration * 1000);
+            el.style.width  = size + 'px';
+            el.style.height = size + 'px';
+            el.style.borderRadius   = Math.random() > 0.5 ? '50%' : '0';
+            const dur = Math.random() * 3 + 2;
+            el.style.animationDuration = dur + 's';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000);
         }
     }
+    createConfetti();
+    setInterval(createConfetti, 2000);
 
-    // Daily Quotes Setup
-    const dailyQuotes = [
-        { quote: "A friend is someone who knows all about you and still loves you.", wish: "- Have a bright and wonderful day!" },
-        { quote: "Count your age by friends, not years. Count your life by smiles, not tears.", wish: "- Keep smiling today!" },
-        { quote: "Every day is an opportunity to create something beautiful.", wish: "- Make today another beautiful memory." },
-        { quote: "The secret of staying young is to live honestly, eat slowly, and lie about your age.", wish: "- Sending joy and laughter your way!" },
-        { quote: "You are never too old to set another goal or to dream a new dream.", wish: "- May your day be filled with inspiration." },
-        { quote: "Life is a journey, and your birthday is a reminder of how far you've come.", wish: "- Have a peaceful and blessed day." },
-        { quote: "The more you praise and celebrate your life, the more there is in life to celebrate.", wish: "- Hope your day is as special as you are!" },
-        { quote: "Let us never know what old age is. Let us know the happiness time brings.", wish: "- Wishing you moments of pure joy today." },
-        { quote: "Today you are you, that is truer than true. There is no one alive who is youer than you.", wish: "- Have an absolutely fantastic day!" },
-        { quote: "You bring so much light into the world.", wish: "- Shine bright today!" },
-        { quote: "Another day, another chance to sparkle.", wish: "- Have a positively radiant day!" },
-        { quote: "There are chapters in your life yet to be written.", wish: "- Wishing you a day full of grand adventures." }
-    ];
+    // ── Daily quotes (relationship-aware) ────────────────────
+    const relQuotes = {
+        mom: [
+            { quote:"A mother's love is the fuel that enables a normal human being to do the impossible.", wish:"— You are that fuel. Happy Birthday, Mom! 💖" },
+            { quote:"The best place in the world is in the arms of someone who will hold you when you need it most.", wish:"— Thank you for always being there. 🌹" },
+            { quote:"A mother is she who can take the place of all others, but whose place no one else can take.", wish:"— Irreplaceable, today and always. 🌸" }
+        ],
+        dad: [
+            { quote:"A father is neither an anchor to hold us back, nor a sail to take us there, but a guiding light.", wish:"— Thank you for guiding us. Happy Birthday! 🌟" },
+            { quote:"Any man can be a father, but it takes someone special to be a dad.", wish:"— You are that someone special. 🏆" },
+            { quote:"A father's love is eternal — it never fades and never fails.", wish:"— We feel it every day. 💙" }
+        ],
+        gf: [
+            { quote:"In all the world, there is no heart for me like yours. In all the world, there is no love for you like mine.", wish:"— You are my world. Happy Birthday! 💕" },
+            { quote:"You are my today and all of my tomorrows.", wish:"— Forever and always. 🌹" },
+            { quote:"Every love story is beautiful, but ours is my favorite.", wish:"— Happy Birthday, my love! 💖" }
+        ],
+        bf: [
+            { quote:"A real man doesn't love a million girls — he loves one girl in a million ways.", wish:"— You are loved beyond measure. ⭐" },
+            { quote:"The best thing in my life walked through my door the day you came in.", wish:"— Happy Birthday to my favorite person! 💙" },
+            { quote:"You are my best friend, my human diary, and my other half.", wish:"— Cheers to you today! 🌟" }
+        ],
+        friend: [
+            { quote:"A good friend knows all your best stories. A best friend has lived them with you.", wish:"— Here's to more adventures! 🎊" },
+            { quote:"Friendship isn't about being inseparable — it's about being separated and knowing nothing will change.", wish:"— You are my forever friend! 💖" },
+            { quote:"Good friends are like stars. You don't always see them, but you know they're always there.", wish:"— You shine the brightest! ✨" }
+        ],
+        brother: [
+            { quote:"Brothers are what best friends can never be.", wish:"— Happy Birthday, bro! 💪" },
+            { quote:"A brother is a friend given by nature.", wish:"— Glad nature gave me you! 🌟" },
+            { quote:"There's no buddy like a brother.", wish:"— Cheers to you today! 🏆" }
+        ],
+        sister: [
+            { quote:"A sister is someone who loves you from the heart — no matter how much you argue, you cannot be drawn apart.", wish:"— Happy Birthday, sis! 💖" },
+            { quote:"Sisters are different flowers from the same garden.", wish:"— You are the most beautiful! 🌸" },
+            { quote:"A sister is a little bit of childhood that can never be lost.", wish:"— Thank you for being mine! 🌺" }
+        ],
+        teacher: [
+            { quote:"The influence of a great teacher can never be erased.", wish:"— Thank you for the impact you've made! 🌟" },
+            { quote:"Teaching is the one profession that creates all other professions.", wish:"— Happy Birthday to an incredible educator! 📚" },
+            { quote:"A teacher takes a hand, opens a mind, and touches a heart.", wish:"— You've touched so many hearts. 💖" }
+        ],
+        other: [
+            { quote:"A friend is someone who knows all about you and still loves you.", wish:"— Have a wonderful day! 💖" },
+            { quote:"You bring so much light into the world.", wish:"— Shine bright today! ✨" },
+            { quote:"Every day is an opportunity to create something beautiful.", wish:"— Make today another beautiful memory. 🌸" }
+        ]
+    };
+    const qList = relQuotes[rel] || relQuotes.other;
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 0);
+    const dayOfYear   = Math.floor((today - startOfYear) / 86400000);
+    const q = qList[dayOfYear % qList.length];
+    document.getElementById('daily-quote').textContent = q.quote;
+    document.getElementById('daily-wish').textContent  = q.wish;
 
-    function updateDailyQuote() {
-        const today = new Date();
-        // A simple formula to pick a quote based on the current day of the year
-        const start = new Date(today.getFullYear(), 0, 0);
-        const diff = (today - start) + ((start.getTimezoneOffset() - today.getTimezoneOffset()) * 60 * 1000);
-        const oneDay = 1000 * 60 * 60 * 24;
-        const dayOfYear = Math.floor(diff / oneDay);
-        
-        const index = dayOfYear % dailyQuotes.length;
-        
-        document.getElementById('daily-quote').innerText = dailyQuotes[index].quote;
-        document.getElementById('daily-wish').innerText = dailyQuotes[index].wish;
-    }
-
-    // Scratch Card Logic
-    function setupScratchCard() {
-        const canvas = document.getElementById('scratch-canvas');
-        if (!canvas) return;
+    // ── Scratch card ──────────────────────────────────────────
+    const canvas = document.getElementById('scratch-canvas');
+    if (canvas) {
         const ctx = canvas.getContext('2d');
-        
-        // Ensure explicit canvas dimensions match CSS dimensions
-        const width = 300;
-        const height = 150;
-        canvas.width = width;
-        canvas.height = height;
-        
-        function fillCanvas() {
-            // Fill canvas with a "scratch-off" layer (e.g., metallic gradient)
-            const gradient = ctx.createLinearGradient(0, 0, width, height);
-            gradient.addColorStop(0, '#757575');
-            gradient.addColorStop(0.5, '#9e9e9e');
-            gradient.addColorStop(1, '#424242');
-            
-            ctx.globalCompositeOperation = 'source-over'; // Default
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, width, height);
-            
-            // Add some instruction text on the canvas layer
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 20px Poppins';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('Scratch Here!', width / 2, height / 2);
-        }
-
-        fillCanvas();
-        
-        let isDrawing = false;
-        
-        function getBrushPos(clientX, clientY) {
-            const rect = canvas.getBoundingClientRect();
+        canvas.width = 300; canvas.height = 150;
+        const g = ctx.createLinearGradient(0,0,300,150);
+        g.addColorStop(0,'#757575'); g.addColorStop(.5,'#9e9e9e'); g.addColorStop(1,'#424242');
+        ctx.fillStyle = g; ctx.fillRect(0,0,300,150);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 18px Poppins';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('✨ Scratch Here! ✨', 150, 75);
+        let drawing = false;
+        function getPos(e) {
+            const r = canvas.getBoundingClientRect();
             return {
-                x: (clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-                y: (clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+                x: ((e.clientX || e.touches[0].clientX) - r.left) / (r.right - r.left) * 300,
+                y: ((e.clientY || e.touches[0].clientY) - r.top)  / (r.bottom - r.top) * 150
             };
         }
-        
-        function drawDot(mouseX, mouseY) {
-            ctx.globalCompositeOperation = 'destination-out'; // This erases
-            ctx.beginPath();
-            ctx.arc(mouseX, mouseY, 20, 0, 2 * Math.PI, false); // 20px blast radius
-            ctx.fill();
+        function erase(x,y) { ctx.globalCompositeOperation='destination-out'; ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2); ctx.fill(); }
+        function check() {
+            const px = ctx.getImageData(0,0,300,150).data;
+            let t = 0; for (let i=3;i<px.length;i+=4) if(px[i]===0) t++;
+            if (t/(px.length/4) > 0.35) { canvas.style.transition='opacity .6s'; canvas.style.opacity='0'; canvas.style.pointerEvents='none'; }
         }
-        
-        // Mouse Events
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            const pos = getBrushPos(e.clientX, e.clientY);
-            drawDot(pos.x, pos.y);
-        });
-        
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isDrawing) return;
-            e.preventDefault();
-            const pos = getBrushPos(e.clientX, e.clientY);
-            drawDot(pos.x, pos.y);
-        });
-        
-        canvas.addEventListener('mouseup', () => { 
-            isDrawing = false; 
-            handleScratchEnd();
-        });
-        canvas.addEventListener('mouseleave', () => { 
-            isDrawing = false; 
-            handleScratchEnd();
-        });
-        
-        // Touch Events
-        canvas.addEventListener('touchstart', (e) => {
-            isDrawing = true;
-            const touch = e.touches[0];
-            const pos = getBrushPos(touch.clientX, touch.clientY);
-            drawDot(pos.x, pos.y);
-            e.preventDefault(); // Prevent scrolling
-        }, { passive: false });
-        
-        canvas.addEventListener('touchmove', (e) => {
-            if (!isDrawing) return;
-            e.preventDefault(); // Prevent scrolling while scratching
-            const touch = e.touches[0];
-            const pos = getBrushPos(touch.clientX, touch.clientY);
-            drawDot(pos.x, pos.y);
-        }, { passive: false });
-        
-        canvas.addEventListener('touchend', () => { 
-            isDrawing = false; 
-            handleScratchEnd();
-        });
-
-        function handleScratchEnd() {
-            if (!ctx) return;
-            const imageData = ctx.getImageData(0, 0, width, height);
-            const pixels = imageData.data;
-            let transparent = 0;
-            
-            // Check alpha channel of every 4th element
-            for (let i = 3; i < pixels.length; i += 4) {
-                if (pixels[i] === 0) {
-                    transparent++;
-                }
-            }
-            
-            const transparentPercentage = (transparent / (pixels.length / 4)) * 100;
-            // If scratched more than 35%, fade it out and make link clickable
-            if (transparentPercentage > 35) {
-                canvas.style.pointerEvents = 'none';
-                canvas.style.transition = 'opacity 0.6s ease';
-                canvas.style.opacity = '0';
-            }
-        }
+        canvas.addEventListener('mousedown',  e=>{drawing=true; erase(...Object.values(getPos(e)));});
+        canvas.addEventListener('mousemove',  e=>{if(drawing) erase(...Object.values(getPos(e)));});
+        canvas.addEventListener('mouseup',    ()=>{drawing=false;check();});
+        canvas.addEventListener('mouseleave', ()=>{drawing=false;check();});
+        canvas.addEventListener('touchstart', e=>{drawing=true; erase(...Object.values(getPos(e))); e.preventDefault();},{passive:false});
+        canvas.addEventListener('touchmove',  e=>{if(drawing) erase(...Object.values(getPos(e))); e.preventDefault();},{passive:false});
+        canvas.addEventListener('touchend',   ()=>{drawing=false;check();});
     }
 
-    // Initial calls
-    updateCountdown();
-    updateTimeline();
-    updateDailyQuote();
-    setupScratchCard();
-    createFallingElements();
-    startCannons();
-    
-    // Update every second
-    setInterval(updateCountdown, 1000);
+    // ── Falling petals/pearls ─────────────────────────────────
+    const fallingContainer = document.getElementById('falling-elements');
+    setInterval(()=>{
+        const el   = document.createElement('div');
+        const type = Math.random() > 0.5 ? 'petal' : 'pearl';
+        el.classList.add(type);
+        el.style.left = Math.random() * 100 + 'vw';
+        const dur  = Math.random() * 6 + 4;
+        el.style.animationDuration = dur + 's';
+        const size = Math.random() * 15 + 10;
+        el.style.width  = (type==='petal' ? size : size*.6)+'px';
+        el.style.height = el.style.width;
+        fallingContainer.appendChild(el);
+        setTimeout(()=>el.remove(), dur*1000);
+    }, 300);
 
-    // Loading Screen
-    setTimeout(() => {
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 1000);
-        }
-    }, 3000);
+    // ── Floating hearts (gender-based) ───────────────────────
+    setInterval(()=>{
+        const h = document.createElement('div');
+        h.classList.add('bg-heart');
+        h.textContent = gd.hearts[Math.floor(Math.random()*gd.hearts.length)];
+        h.style.left              = Math.random()*100+'vw';
+        h.style.animationDelay    = Math.random()*3+'s';
+        h.style.animationDuration = (Math.random()*10+10)+'s';
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(), 20000);
+    }, 2500);
 
-    // Falling Pearls & Petals
-    function createFallingElements() {
-        const container = document.getElementById('falling-elements');
-        if (!container) return;
+    // ── Mouse sparkle trail (gender-based) ───────────────────
+    document.addEventListener('mousemove', e=>{
+        if (Math.random() > 0.25) return;
+        const s = document.createElement('div');
+        s.classList.add('mouse-sparkle');
+        s.textContent = gd.sparkles[Math.floor(Math.random()*gd.sparkles.length)];
+        s.style.left  = e.clientX+'px';
+        s.style.top   = e.clientY+'px';
+        document.body.appendChild(s);
+        setTimeout(()=>s.remove(), 1000);
+    });
 
-        const types = ['pearl', 'petal'];
-        
-        setInterval(() => {
-            const el = document.createElement('div');
-            const type = types[Math.floor(Math.random() * types.length)];
-            el.classList.add(type);
-            
-            el.style.left = Math.random() * 100 + 'vw';
-            const duration = Math.random() * 6 + 4; // 4s to 10s
-            el.style.animationDuration = duration + 's';
-            
-            // Random sizes
-            const size = Math.random() * 15 + 10;
-            if (type === 'petal') {
-                el.style.width = size + 'px';
-                el.style.height = size + 'px';
-            } else { // pearl
-                el.style.width = (size * 0.6) + 'px';
-                el.style.height = (size * 0.6) + 'px';
-            }
-
-            container.appendChild(el);
-            
-            setTimeout(() => {
-                el.remove();
-            }, duration * 1000);
-        }, 300); // create a new element every 300ms
+    // ── Cannons (gender-based emojis) ────────────────────────
+    const particleContainer = document.getElementById('cannon-particles');
+    function shootParticle(side) {
+        const p = document.createElement('div');
+        p.textContent = gd.cannonEmojis[Math.floor(Math.random()*gd.cannonEmojis.length)];
+        p.classList.add('cannon-particle');
+        if (side==='left') { p.style.left='60px'; p.style.bottom='80px'; }
+        else               { p.style.right='60px'; p.style.bottom='80px'; }
+        const h = side==='left' ? (Math.random()*40+20) : -(Math.random()*40+20);
+        const v = -(Math.random()*50+50);
+        p.style.setProperty('--tx',  `${h}vw`);
+        p.style.setProperty('--ty',  `${v}vh`);
+        p.style.setProperty('--rot', `${Math.random()*360+360}deg`);
+        p.style.fontSize = (Math.random()*1.5+1)+'rem';
+        particleContainer.appendChild(p);
+        setTimeout(()=>p.remove(), 3000);
     }
+    function burst(side, n=20) { for(let i=0;i<n;i++) setTimeout(()=>shootParticle(side),i*50); }
 
-    // Bottom Corner Cannons
-    function startCannons() {
-        const container = document.getElementById('cannon-particles');
-        if (!container) return;
+    document.getElementById('cannon-left') .addEventListener('click',()=>burst('left'));
+    document.getElementById('cannon-right').addEventListener('click',()=>burst('right'));
+    document.getElementById('interactive-cake-btn').addEventListener('click',()=>{
+        for(let i=0;i<50;i++) setTimeout(()=>shootParticle(Math.random()>.5?'left':'right'),i*30);
+        document.querySelector('.pulse-text').textContent = `YAY! Happy Birthday, ${to}! 🎉💖`;
+    });
 
-        const emojis = ['🌸', '🌺', '🌼', '✨', '🎉', '💖'];
+    // ── Cake modal (show on birthday) ────────────────────────
+    document.getElementById('close-cake').addEventListener('click',()=>document.getElementById('cake-modal').classList.add('hidden'));
+    const isBirthday = now.getMonth()===targetDate.getMonth() && now.getDate()===targetDate.getDate();
+    if (isBirthday) setTimeout(()=>document.getElementById('cake-modal').classList.remove('hidden'), 3500);
 
-        function shootParticle(side) {
-            const particle = document.createElement('div');
-            particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-            particle.classList.add('cannon-particle');
-            
-            // Base positioning (near the cannon muzzles)
-            if (side === 'left') {
-                particle.style.left = '60px'; // near left cannon barrel
-                particle.style.bottom = '80px';
-            } else {
-                particle.style.right = '60px'; // near right cannon barrel
-                particle.style.bottom = '80px';
-            }
-
-            // Calculate varied trajectory
-            const horizontalForce = side === 'left' ? (Math.random() * 40 + 20) : -(Math.random() * 40 + 20); // 20vw to 60vw inwards
-            const verticalForce = -(Math.random() * 50 + 50); // -50vh to -100vh upwards
-            const rotation = Math.random() * 360 + 360;
-
-            particle.style.setProperty('--tx', `${horizontalForce}vw`);
-            particle.style.setProperty('--ty', `${verticalForce}vh`);
-            particle.style.setProperty('--rot', `${rotation}deg`);
-
-            // Random size
-            const size = Math.random() * 1.5 + 1; // 1rem to 2.5rem
-            particle.style.fontSize = `${size}rem`;
-
-            container.appendChild(particle);
-
-            // Remove particle after animation ends
-            setTimeout(() => {
-                particle.remove();
-            }, 3000);
-        }
-
-        // Click on cannon triggers burst
-        const leftCannon = document.getElementById('cannon-left');
-        const rightCannon = document.getElementById('cannon-right');
-
-        function cannonClick(side) {
-            // Burst 20 flowers instantly
-            for (let i = 0; i < 20; i++) {
-                setTimeout(() => shootParticle(side), i * 50);
-            }
-        }
-
-        if (leftCannon) {
-            leftCannon.addEventListener('click', () => cannonClick('left'));
-        }
-        if (rightCannon) {
-            rightCannon.addEventListener('click', () => cannonClick('right'));
-        }
-        
-        // Interactive Cake logic
-        const interactiveCake = document.getElementById('interactive-cake-btn');
-        if (interactiveCake) {
-            interactiveCake.addEventListener('click', () => {
-                for (let i = 0; i < 50; i++) {
-                    setTimeout(() => shootParticle(Math.random() > 0.5 ? 'left' : 'right'), i * 30);
-                }
-                const msg = document.querySelector('.timeline-message.pulse-text');
-                if(msg) msg.innerText = "YAY! Happy Birthday! 🎉💖";
-            });
-        }
-    }
+    // ── Loading screen ────────────────────────────────────────
+    setTimeout(()=>{
+        const ls = document.getElementById('loading-screen');
+        if (ls) { ls.style.opacity='0'; setTimeout(()=>ls.style.display='none',1000); }
+    }, 2500);
 });
