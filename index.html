@@ -333,6 +333,7 @@ ol.steps{list-style:none;counter-reset:s}
     <div id="qr-box" style="display:none;text-align:center;padding:.9rem 0 .2rem">
         <img id="qr-img" src="" alt="QR Code" style="border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.35);background:#fff;padding:8px;width:clamp(140px,42vw,180px);height:clamp(140px,42vw,180px)">
         <p style="font-size:.74rem;color:rgba(255,255,255,.45);margin-top:.45rem">📱 Scan with any phone camera to open</p>
+        <p id="short-fail-note" style="display:none;font-size:.75rem;color:rgba(255,215,0,.75);margin-top:.3rem">⚠️ Link shortening needs the page to be hosted online (GitHub Pages / Netlify). QR code works fine!</p>
     </div>
 
     <div class="note" style="margin-top:.75rem">💡 <strong>Quickest way:</strong> Click <em>Shorten + QR</em> → send the short link or let your friend scan the QR code!</div>
@@ -584,20 +585,29 @@ async function shortenAndQR(){
     const url=buildURL(cfg);
     const btn=document.getElementById('shorten-btn');
     btn.disabled=true;btn.textContent='⏳ Working...';
+
+    // QR code is just an <img> src — no CORS, always works
+    document.getElementById('qr-img').src=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}&bgcolor=ffffff&color=1a0b2e&margin=10`;
+    document.getElementById('qr-box').style.display='';
+    document.getElementById('short-fail-note').style.display='none';
+
+    // Try to shorten — may fail from file:// or without hosting
     try{
         const res=await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`);
         if(!res.ok) throw new Error();
         const short=(await res.text()).trim();
+        if(!short.startsWith('http')) throw new Error();
         document.getElementById('short-link-text').textContent=short;
         document.getElementById('short-link-box').style.display='';
+        // Upgrade QR to the short URL
         document.getElementById('qr-img').src=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(short)}&bgcolor=ffffff&color=1a0b2e&margin=10`;
-        document.getElementById('qr-box').style.display='';
         btn.textContent='✅ Done!';
-        setTimeout(()=>{btn.textContent='✂️ Shorten Link + QR Code';btn.disabled=false;},3000);
     }catch{
-        showError('⚠️ Could not shorten the link. Check your internet and try again.');
-        btn.textContent='✂️ Shorten Link + QR Code';btn.disabled=false;
+        // QR is already showing — silently explain why shortening failed
+        document.getElementById('short-fail-note').style.display='';
+        btn.textContent='✅ QR Ready!';
     }
+    setTimeout(()=>{btn.textContent='✂️ Shorten Link + QR Code';btn.disabled=false;},3000);
 }
 function copyShortLink(){
     const txt=document.getElementById('short-link-text').textContent;
