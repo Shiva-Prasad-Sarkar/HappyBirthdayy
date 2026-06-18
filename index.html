@@ -149,6 +149,7 @@ body{
 .btn-preview{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
 .btn-copy   {background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff}
 .btn-dl     {background:linear-gradient(135deg,#4facfe,#00f2fe);color:#1a1a2e;font-weight:700}
+.btn-shorten{background:linear-gradient(135deg,#11998e,#38ef7d);color:#1a1a2e;font-weight:700}
 
 /* ── Link box ─────────────────────────────────────────────── */
 .link-box{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:.9rem 1rem;display:none;margin-top:.9rem;word-break:break-all}
@@ -313,11 +314,28 @@ ol.steps{list-style:none;counter-reset:s}
         <button class="btn btn-dl"       onclick="downloadFiles()" id="dl-btn">⬇️ Download</button>
     </div>
     <div class="link-box" id="link-box">
-        <p>Your shareable link — copy and send this to your friend:</p>
+        <p>Your shareable link:</p>
         <code id="link-text"></code>
         <div class="copy-ok" id="copy-ok">✅ Copied to clipboard!</div>
     </div>
-    <div class="note">💡 <strong>Quickest way:</strong> Click <em>Copy Link</em> → paste into WhatsApp or any chat. Your friend opens it in their browser — no app needed!</div>
+
+    <div style="margin-top:.75rem">
+        <button class="btn btn-shorten" id="shorten-btn" onclick="shortenAndQR()" style="width:100%">✂️ Shorten Link + QR Code</button>
+    </div>
+
+    <div class="link-box" id="short-link-box" style="display:none;margin-top:.75rem">
+        <p>Short link — easy to paste anywhere:</p>
+        <code id="short-link-text"></code>
+        <button onclick="copyShortLink()" id="short-copy-btn" style="margin-top:.55rem;background:var(--accent);color:#1a0b2e;border:none;border-radius:6px;padding:.28rem .8rem;font-family:'Poppins',sans-serif;font-size:.74rem;font-weight:700;cursor:pointer">📋 Copy Short Link</button>
+        <div class="copy-ok" id="short-copy-ok">✅ Copied!</div>
+    </div>
+
+    <div id="qr-box" style="display:none;text-align:center;padding:.9rem 0 .2rem">
+        <img id="qr-img" src="" alt="QR Code" style="border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.35);background:#fff;padding:8px;width:clamp(140px,42vw,180px);height:clamp(140px,42vw,180px)">
+        <p style="font-size:.74rem;color:rgba(255,255,255,.45);margin-top:.45rem">📱 Scan with any phone camera to open</p>
+    </div>
+
+    <div class="note" style="margin-top:.75rem">💡 <strong>Quickest way:</strong> Click <em>Shorten + QR</em> → send the short link or let your friend scan the QR code!</div>
 </div>
 
 <!-- ── STEP 5: Deploy guide ───────────────────────────────── -->
@@ -558,6 +576,38 @@ function useTpl(i){
     document.getElementById('inp-msg').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── Shorten + QR ──────────────────────────────────────────────
+async function shortenAndQR(){
+    const cfg=getConfig();
+    if(!cfg.to){showError("⚠️ Please enter the birthday person's name to continue!");return;}
+    const url=buildURL(cfg);
+    const btn=document.getElementById('shorten-btn');
+    btn.disabled=true;btn.textContent='⏳ Working...';
+    try{
+        const res=await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`);
+        if(!res.ok) throw new Error();
+        const short=(await res.text()).trim();
+        document.getElementById('short-link-text').textContent=short;
+        document.getElementById('short-link-box').style.display='';
+        document.getElementById('qr-img').src=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(short)}&bgcolor=ffffff&color=1a0b2e&margin=10`;
+        document.getElementById('qr-box').style.display='';
+        btn.textContent='✅ Done!';
+        setTimeout(()=>{btn.textContent='✂️ Shorten Link + QR Code';btn.disabled=false;},3000);
+    }catch{
+        showError('⚠️ Could not shorten the link. Check your internet and try again.');
+        btn.textContent='✂️ Shorten Link + QR Code';btn.disabled=false;
+    }
+}
+function copyShortLink(){
+    const txt=document.getElementById('short-link-text').textContent;
+    const btn=document.getElementById('short-copy-btn');
+    const ok=document.getElementById('short-copy-ok');
+    navigator.clipboard.writeText(txt).then(()=>{
+        btn.textContent='✅ Copied!';ok.style.display='block';
+        setTimeout(()=>{btn.textContent='📋 Copy Short Link';ok.style.display='none';},2500);
+    }).catch(()=>prompt('Copy this short link:',txt));
+}
 </script>
 </body>
 </html>
