@@ -2,8 +2,8 @@
 
 A fully customisable, animated birthday page — built as a pure static site (no backend, no server).
 
-**Live demo:** https://shiva-prasad-sarkar.github.io/HappyBirthdayy/
-**Customiser:** https://shiva-prasad-sarkar.github.io/HappyBirthdayy/customize.html
+**Customiser (landing page):** https://shiva-prasad-sarkar.github.io/HappyBirthdayy/
+**Birthday page example:** https://shiva-prasad-sarkar.github.io/HappyBirthdayy/wish.html
 
 ---
 
