@@ -70,7 +70,7 @@ window.BDAY_CONFIG = {
 
     <!-- Cake -->
     <div class="main-cake-container" style="margin-top:2rem;">
-        <h2 class="timeline-message pulse-text" id="cake-prompt">please cut the cake..</h2>
+        <h2 class="pulse-text" id="cake-prompt">please cut the cake..</h2>
         <div id="interactive-cake-btn" style="cursor:pointer;display:inline-block;animation:floatAnim 3s infinite ease-in-out;">
             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg" class="special-cake-svg">
                 <defs><radialGradient id="cakeGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(255,215,0,0.4)"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
@@ -95,17 +95,11 @@ window.BDAY_CONFIG = {
         </div>
     </div>
 
-    <!-- Timeline -->
-    <div class="timeline-container">
-        <div class="timeline-track">
-            <div class="timeline-progress" id="timeline-progress"></div>
-            <div class="timeline-girl" id="timeline-girl">🚶‍➡️</div>
-        </div>
-        <div class="timeline-labels">
-            <span id="timeline-start-date">...</span>
-            <span id="timeline-end-date">...</span>
-        </div>
-        <p class="timeline-message" id="timeline-message">Walking towards your special day...</p>
+    <!-- Name Hero (balloon letters + glowing title + relationship tag) -->
+    <div class="name-hero">
+        <div class="balloon-name" id="balloon-name"></div>
+        <div class="hero-title-ribbon" id="hero-title-ribbon">✨ The Legendary Friend ✨</div>
+        <span class="hero-rel-tag" id="hero-rel-tag">🤝 Best Friend</span>
     </div>
 
     <!-- Personal message — letter design -->
@@ -113,7 +107,6 @@ window.BDAY_CONFIG = {
         <h2 class="section-label">💌 A Letter For You</h2>
         <div class="letter-wrap">
             <div class="letter-paper">
-                <p class="letter-dear" id="letter-to-name">Dear Friend,</p>
                 <p class="personal-msg-text" id="personal-msg-text"></p>
                 <p class="msg-from" id="msg-from">— Someone Special</p>
                 <span class="letter-watermark">💌</span>
@@ -145,7 +138,7 @@ window.BDAY_CONFIG = {
         <span class="candle-text" id="candle-text">you will always glow like this ✨</span>
     </div>
 
-    <!-- Scratch card -->
+    <!-- Scratch card (shown only when a surprise link is set) -->
     <div class="scratch-card-section">
         <h2>🎁 Today's Surprise</h2>
         <p>Scratch to reveal your special gift!</p>
@@ -159,9 +152,10 @@ window.BDAY_CONFIG = {
 
     <!-- Create your own -->
     <div class="create-own-section">
-        <p style="color:#fecfef;margin-bottom:1.2rem;font-size:clamp(.85rem,2.5vw,1rem);">Want to create a wish like this for someone you love?</p>
-        <a href="index.html" class="create-own-btn">🎨 Create Your Own Birthday Wish →</a>
+        <p>Want to create a wish like this for someone you love?</p>
+        <a href="https://shiva-prasad-sarkar.github.io/HappyBirthdayy/" class="create-own-btn" target="_blank" rel="noopener noreferrer">🎨 Create Your Own Birthday Wish →</a>
     </div>
+
 </div>
 
 <!-- Cannons -->

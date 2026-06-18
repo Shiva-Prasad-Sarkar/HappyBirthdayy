@@ -62,15 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Relationship-based messages ───────────────────────────
     const relData = {
-        mom:     { label:'Mom',       icon:'👩', timelineReach:`You made it, Mom! Happy Birthday to the world's best! 🌹💖` },
-        dad:     { label:'Dad',       icon:'👨', timelineReach:`Happy Birthday, Dad! You're our hero! 🏆` },
-        gf:      { label:'Girlfriend',icon:'💕', timelineReach:`You made it, my love! Happy Birthday! 🌹💕` },
-        bf:      { label:'Boyfriend', icon:'💙', timelineReach:`Happy Birthday to my favorite person! 💙⭐` },
-        friend:  { label:'Best Friend',icon:'🤝', timelineReach:`YAY! ${to}'s birthday is here! LET'S CELEBRATE! 🎊🥳` },
-        brother: { label:'Brother',   icon:'👦', timelineReach:`Happy Birthday, bro! You're a legend! 💪🏆` },
-        sister:  { label:'Sister',    icon:'👧', timelineReach:`Happy Birthday, sis! You're amazing! 🌸💖` },
-        teacher: { label:'Teacher',   icon:'📚', timelineReach:`Happy Birthday! Thank you for everything! 🌟` },
-        other:   { label:'Friend',    icon:'🎉', timelineReach:`Wishing you a magical birthday, ${to}! 🎉✨` }
+        mom:     { label:'Mom',        icon:'👩' },
+        dad:     { label:'Dad',        icon:'👨' },
+        gf:      { label:'Girlfriend', icon:'💕' },
+        bf:      { label:'Boyfriend',  icon:'💙' },
+        friend:  { label:'Best Friend',icon:'🤝' },
+        brother: { label:'Brother',    icon:'👦' },
+        sister:  { label:'Sister',     icon:'👧' },
+        teacher: { label:'Teacher',    icon:'📚' },
+        other:   { label:'Friend',     icon:'🎉' },
     };
     const rd = relData[rel] || relData.other;
 
@@ -86,9 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById('flower-' + (i + 1));
         if (el) el.textContent = emoji;
     });
-
-    // ── Timeline walker ───────────────────────────────────────
-    document.getElementById('timeline-girl').textContent = gd.walker;
 
     // ── Age badge ─────────────────────────────────────────────
     if (age > 0) {
@@ -127,34 +124,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── Personal message — letter ─────────────────────────────
     if (msg) {
-        const dearEl = document.getElementById('letter-to-name');
-        if (dearEl) dearEl.textContent = `Dear ${to},`;
         document.getElementById('personal-msg-text').textContent = msg;
         document.getElementById('msg-from').textContent = `— ${from}`;
         document.getElementById('personal-msg-section').style.display = 'block';
     }
 
-    // ── Timeline ──────────────────────────────────────────────
-    const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const startDate = new Date(targetDate.getFullYear(), targetDate.getMonth() - 1, targetDate.getDate());
-    document.getElementById('timeline-start-date').textContent = `${shortMonths[startDate.getMonth()]} ${startDate.getDate()}`;
-    document.getElementById('timeline-end-date').textContent   = `${shortMonths[targetDate.getMonth()]} ${targetDate.getDate()}`;
-
-    function updateTimeline() {
-        const elapsed = now - startDate;
-        const total   = targetDate - startDate;
-        const pct     = Math.min(100, Math.max(0, (elapsed / total) * 100));
-        setTimeout(() => {
-            document.getElementById('timeline-girl').style.left     = `${pct}%`;
-            document.getElementById('timeline-progress').style.width = `${pct}%`;
-        }, 500);
-        const msgEl = document.getElementById('timeline-message');
-        if (pct >= 100)    msgEl.textContent = rd.timelineReach;
-        else if (pct > 80) msgEl.textContent = `Almost there — so close now! 🏃‍♀️✨`;
-        else if (pct > 50) msgEl.textContent = `Halfway to the best day of the year! 🌸`;
-        else               msgEl.textContent = `Walking towards your special day... ${gd.walker}`;
+    // ── Name Hero (balloon letters + title ribbon) ────────────
+    const balloonColors = [
+        'linear-gradient(135deg,#f093fb,#f5576c)',
+        'linear-gradient(135deg,#4facfe,#00f2fe)',
+        'linear-gradient(135deg,#43e97b,#38f9d7)',
+        'linear-gradient(135deg,#f6d365,#fda085)',
+        'linear-gradient(135deg,#a18cd1,#fbc2eb)',
+        'linear-gradient(135deg,#ff9a9e,#fecfef)',
+        'linear-gradient(135deg,#fbc2eb,#a6c1ee)',
+        'linear-gradient(135deg,#ffd89b,#19547b)',
+    ];
+    const balloonEl = document.getElementById('balloon-name');
+    if (balloonEl) {
+        let ci = 0;
+        to.split('').forEach((ch, i) => {
+            if (ch === ' ') {
+                const sp = document.createElement('div');
+                sp.style.cssText = 'width:clamp(10px,2.5vw,18px);flex-shrink:0';
+                balloonEl.appendChild(sp);
+                return;
+            }
+            const bl = document.createElement('div');
+            bl.classList.add('bl');
+            bl.textContent = ch;
+            bl.style.background = balloonColors[ci % balloonColors.length];
+            bl.style.setProperty('--d', `${i * 0.18}s`);
+            balloonEl.appendChild(bl);
+            ci++;
+        });
     }
-    updateTimeline();
+    const heroTitles = {
+        friend:  { female:'The Radiant',     male:'The Legendary'    },
+        mom:     { female:'The Wonderful',   male:'The Wonderful'    },
+        dad:     { female:'The Magnificent', male:'The Mighty'       },
+        gf:      { female:'The Enchanting',  male:'The Enchanting'   },
+        bf:      { female:'The Incredible',  male:'The Incredible'   },
+        brother: { female:'The Unstoppable', male:'The Unstoppable'  },
+        sister:  { female:'The Brilliant',   male:'The Brilliant'    },
+        teacher: { female:'The Inspiring',   male:'The Inspiring'    },
+        other:   { female:'The Wonderful',   male:'The Wonderful'    },
+    };
+    const gKey = gender === 'male' ? 'male' : 'female';
+    const titlePrefix = (heroTitles[rel] || heroTitles.other)[gKey];
+    const ribbonEl = document.getElementById('hero-title-ribbon');
+    if (ribbonEl) ribbonEl.textContent = `✨ ${titlePrefix} ${to} ✨`;
+    const relTagEl = document.getElementById('hero-rel-tag');
+    if (relTagEl) relTagEl.textContent = `${rd.icon}  ${rd.label}`;
 
     // ── Confetti ──────────────────────────────────────────────
     function createConfetti() {
@@ -237,7 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('scratch-canvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
-        canvas.width = 300; canvas.height = 150;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = 300 * dpr; canvas.height = 150 * dpr;
+        ctx.scale(dpr, dpr);
         const g = ctx.createLinearGradient(0,0,300,150);
         g.addColorStop(0,'#757575'); g.addColorStop(.5,'#9e9e9e'); g.addColorStop(1,'#424242');
         ctx.fillStyle = g; ctx.fillRect(0,0,300,150);
@@ -254,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         function erase(x,y) { ctx.globalCompositeOperation='destination-out'; ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2); ctx.fill(); }
         function check() {
-            const px = ctx.getImageData(0,0,300,150).data;
+            const px = ctx.getImageData(0,0,canvas.width,canvas.height).data;
             let t = 0; for (let i=3;i<px.length;i+=4) if(px[i]===0) t++;
             if (t/(px.length/4) > 0.35) { canvas.style.transition='opacity .6s'; canvas.style.opacity='0'; canvas.style.pointerEvents='none'; }
         }
@@ -328,14 +351,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('cannon-left') .addEventListener('click',()=>burst('left'));
     document.getElementById('cannon-right').addEventListener('click',()=>burst('right'));
+
+    // ── Auto-fire cannons continuously ────────────────────────
+    function autoCannons() {
+        burst('left', 18);
+        setTimeout(() => burst('right', 18), 1200);
+    }
+    autoCannons();
+    setInterval(autoCannons, 4000);
     document.getElementById('interactive-cake-btn').addEventListener('click',()=>{
         for(let i=0;i<50;i++) setTimeout(()=>shootParticle(Math.random()>.5?'left':'right'),i*30);
-        document.querySelector('.pulse-text').textContent = `YAY! Happy Birthday, ${to}! 🎉💖`;
+        document.querySelector('.pulse-text').textContent = `YAY! Happy Birthday, ${to}! 🎉${gd.flowers[0]}`;
     });
 
     // ── Cake modal (show on birthday) ────────────────────────
     document.getElementById('close-cake').addEventListener('click',()=>document.getElementById('cake-modal').classList.add('hidden'));
-    const isBirthday = now.getMonth()===targetDate.getMonth() && now.getDate()===targetDate.getDate();
+    const isBirthday = now.getMonth() === (bdMonth - 1) && now.getDate() === bdDay;
     if (isBirthday) setTimeout(()=>document.getElementById('cake-modal').classList.remove('hidden'), 3500);
 
     // ── Loading screen ────────────────────────────────────────

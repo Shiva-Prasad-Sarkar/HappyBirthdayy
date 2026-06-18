@@ -168,51 +168,110 @@ a, button, .time-box, .quote-card, .cannon, [role="button"] {
 @keyframes pulseCakeGlow { from{r:75;opacity:.7} to{r:95;opacity:1} }
 @keyframes flickerCakeFlame { 0%{transform:scale(1) rotate(-3deg)} 50%{transform:scale(1.1) rotate(3deg)} 100%{transform:scale(.9) rotate(-1deg)} }
 
-/* ── Timeline ────────────────────────────────────────────── */
-.timeline-container {
+/* ── Create-your-own (bottom) ────────────────────────────── */
+.create-own-section {
+    margin-top: var(--section-gap);
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+.create-own-section > p {
+    color: #fecfef;
+    margin-bottom: 1rem;
+    font-size: clamp(0.82rem, 2.3vw, 0.95rem);
+}
+.create-own-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: linear-gradient(135deg, var(--accent), #ffb300);
+    color: #1a0b2e;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    padding: 0.75rem 1.8rem;
+    border-radius: 50px;
+    font-size: clamp(0.82rem, 2.5vw, 0.95rem);
+    transition: all .3s;
+    min-height: 48px;
+    box-shadow: 0 5px 18px rgba(255,215,0,0.35);
+    -webkit-tap-highlight-color: transparent;
+}
+.create-own-btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(255,215,0,0.5); }
+.create-own-btn:active { transform: translateY(0); }
+
+/* ── Name Hero ───────────────────────────────────────────── */
+.name-hero {
     margin: var(--section-gap) auto 0;
-    padding: 0.5rem 0;
-    width: min(580px, 90%);
+    text-align: center;
+    padding: 0 0.5rem;
 }
-.timeline-track {
-    position: relative; height: 10px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-    margin-bottom: clamp(1.8rem, 5vw, 2.5rem);
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+.balloon-name {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(4px, 1.5vw, 8px);
+    margin-bottom: 1.1rem;
 }
-.timeline-progress {
-    position: absolute; top:0; left:0; height:100%;
-    background: linear-gradient(90deg, var(--accent-2), #fecfef);
-    border-radius: 10px; width: 0%;
-    transition: width 1.5s ease-in-out;
-    box-shadow: 0 0 10px rgba(254,207,239,0.8);
-}
-.timeline-girl {
-    position: absolute;
-    top: clamp(-28px, -6vw, -45px);
-    left: 0%;
-    font-size: clamp(1.8rem, 6vw, 3.5rem);
-    transform: translateX(-50%);
-    transition: left 1.5s ease-in-out;
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
-    z-index: 5;
-    animation: walkBounce .5s infinite alternate ease-in-out;
-}
-@keyframes walkBounce { 0%{transform:translate(-50%,0) rotate(-5deg)} 100%{transform:translate(-50%,-8px) rotate(5deg)} }
-.timeline-labels {
-    display: flex; justify-content: space-between;
-    font-size: clamp(0.78rem, 2.5vw, 1.1rem);
-    font-weight: 600; color: #fecfef;
-    margin-top: clamp(1.5rem, 4vw, 2rem);
-}
-.timeline-message {
-    margin-top: 0.75rem;
+.bl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(36px, 9vw, 56px);
+    height: clamp(36px, 9vw, 56px);
+    border-radius: 50%;
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(1rem, 3.5vw, 1.8rem);
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.35);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.28), inset 0 -3px 0 rgba(0,0,0,0.12);
+    animation: balloonBob 2.5s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+    position: relative;
+    flex-shrink: 0;
+}
+.bl::after {
+    content: '';
+    position: absolute;
+    top: 14%; left: 18%;
+    width: 26%; height: 22%;
+    background: rgba(255,255,255,0.38);
+    border-radius: 50%;
+    transform: rotate(-30deg);
+    pointer-events: none;
+}
+@keyframes balloonBob {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-10px) scale(1.06); }
+}
+.hero-title-ribbon {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,154,158,0.12));
+    border: 1px solid rgba(255,215,0,0.32);
+    border-radius: 50px;
+    padding: clamp(0.4rem,1.5vw,0.6rem) clamp(1rem,4vw,1.8rem);
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.1rem, 4vw, 1.9rem);
     color: var(--accent);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 0 0 12px rgba(255,215,0,0.35);
+    animation: ribbonGlow 3s ease-in-out infinite alternate;
+    max-width: 92%;
+    word-break: break-word;
     line-height: 1.3;
+}
+@keyframes ribbonGlow {
+    from { box-shadow: 0 0 8px rgba(255,215,0,0.08); }
+    to   { box-shadow: 0 0 28px rgba(255,215,0,0.32), 0 0 52px rgba(255,154,158,0.18); }
+}
+.hero-rel-tag {
+    display: block;
+    font-size: clamp(0.72rem, 2vw, 0.86rem);
+    color: rgba(255,255,255,0.55);
+    margin-top: 0.55rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 /* ── Personal Message — Letter ───────────────────────────── */
@@ -256,14 +315,6 @@ a, button, .time-box, .quote-card, .cannon, [role="button"] {
     top: 0; bottom: 0;
     width: 2px;
     background: rgba(210,60,60,0.4);
-}
-.letter-dear {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(1.15rem, 4vw, 1.65rem);
-    color: #2d1b0e;
-    margin-bottom: 0.8rem;
-    font-weight: 700;
-    position: relative; z-index: 1;
 }
 .personal-msg-text {
     font-family: 'Dancing Script', cursive;
@@ -368,33 +419,6 @@ a, button, .time-box, .quote-card, .cannon, [role="button"] {
 @keyframes flickerAura    { 0%{r:38;opacity:.9} 100%{r:42;opacity:1} }
 @keyframes flickerFlame   { 0%{transform:scale(1) rotate(-2deg)} 50%{transform:scale(1.05) rotate(2deg)} 100%{transform:scale(.95) rotate(-1deg)} }
 
-/* ── Create-your-own ─────────────────────────────────────── */
-.create-own-section {
-    margin-top: var(--section-gap);
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.15);
-}
-.create-own-section > p { color: #fecfef; margin-bottom: 0.9rem; font-size: clamp(0.85rem, 2.5vw, 1rem); }
-.create-own-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, var(--accent), #ffb300);
-    color: #1a0b2e;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    text-decoration: none;
-    padding: 0.95rem 2.4rem;
-    border-radius: 50px;
-    font-size: clamp(0.9rem, 2.8vw, 1.05rem);
-    transition: all .3s;
-    min-height: 54px;
-    box-shadow: 0 6px 22px rgba(255,215,0,0.4);
-    letter-spacing: 0.2px;
-    -webkit-tap-highlight-color: transparent;
-}
-.create-own-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(255,215,0,0.55); }
-.create-own-btn:active { transform: translateY(-1px); }
 
 /* ── Bottom Cannons ──────────────────────────────────────── */
 .bottom-cannons {
@@ -505,8 +529,7 @@ a, button, .time-box, .quote-card, .cannon, [role="button"] {
 
     .bottom-cannons { bottom: -6px; }
 
-    /* Give timeline breathing room with small devices */
-    .timeline-container { width: 84%; }
+
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -516,5 +539,5 @@ a, button, .time-box, .quote-card, .cannon, [role="button"] {
     :root { --section-gap: 1.4rem; }
     .flower-box { width: 46px; height: 46px; }
     .animated-flower { font-size: 1.5rem; }
-    .timeline-container { width: 80%; }
+
 }

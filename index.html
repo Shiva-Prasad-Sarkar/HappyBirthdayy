@@ -199,12 +199,12 @@ ol.steps{list-style:none;counter-reset:s}
 
     <div class="row2">
         <div class="fg">
-            <label>🎯 Friend's Name <span class="req">*</span></label>
-            <input type="text" id="inp-to" placeholder="e.g. fruit" maxlength="50" oninput="liveUpdate()" autocomplete="off">
+            <label>🎯 Their Name <span class="req">*</span></label>
+            <input type="text" id="inp-to" placeholder="e.g. Sarah" maxlength="50" oninput="liveUpdate()" autocomplete="off">
         </div>
         <div class="fg">
             <label>👤 Your Name <span class="req">*</span></label>
-            <input type="text" id="inp-from" placeholder="e.g. Shiva" maxlength="50" oninput="liveUpdate()" autocomplete="off">
+            <input type="text" id="inp-from" placeholder="e.g. Alex" maxlength="50" oninput="liveUpdate()" autocomplete="off">
         </div>
     </div>
 
@@ -215,7 +215,7 @@ ol.steps{list-style:none;counter-reset:s}
                 <select id="inp-month" onchange="liveUpdate()">
                     <option value="01">January</option><option value="02">February</option>
                     <option value="03">March</option><option value="04">April</option>
-                    <option value="05" selected>May</option><option value="06">June</option>
+                    <option value="05">May</option><option value="06">June</option>
                     <option value="07">July</option><option value="08">August</option>
                     <option value="09">September</option><option value="10">October</option>
                     <option value="11">November</option><option value="12">December</option>
@@ -306,6 +306,7 @@ ol.steps{list-style:none;counter-reset:s}
 <!-- ── STEP 4: Share ──────────────────────────────────────── -->
 <div class="card">
     <div class="card-title">🚀 Step 4 — Share It!</div>
+    <div id="form-error" style="display:none;color:#ff6b6b;font-size:.82rem;padding:.45rem .9rem;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.35);border-radius:8px;margin-bottom:.75rem"></div>
     <div class="action-row">
         <button class="btn btn-preview"  onclick="previewWish()">👀 Preview</button>
         <button class="btn btn-copy"     onclick="copyLink()" id="copy-btn">🔗 Copy Link</button>
@@ -360,16 +361,29 @@ ol.steps{list-style:none;counter-reset:s}
     </div>
 </div>
 
-<div class="back"><a href="wish.html">← Preview birthday page</a></div>
 
 </div><!-- /page -->
 
 <script>
-// ── Day options ──────────────────────────────────────────────
+// ── Day options & default to today ───────────────────────────
 (function(){
+    const today=new Date();
+    const curDay=today.getDate();
+    const curMonth=String(today.getMonth()+1).padStart(2,'0');
+    document.getElementById('inp-month').value=curMonth;
     const s=document.getElementById('inp-day');
-    for(let d=1;d<=31;d++){const o=document.createElement('option');o.value=String(d).padStart(2,'0');o.textContent=d;if(d===1)o.selected=true;s.appendChild(o);}
+    for(let d=1;d<=31;d++){const o=document.createElement('option');o.value=String(d).padStart(2,'0');o.textContent=d;if(d===curDay)o.selected=true;s.appendChild(o);}
+    liveUpdate();
 })();
+
+// ── Validation helper ─────────────────────────────────────────
+function showError(msg){
+    const el=document.getElementById('form-error');
+    el.textContent=msg;
+    el.style.display='';
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>{if(el)el.style.display='none';},4000);
+}
 
 // ── Tabs ──────────────────────────────────────────────────────
 function showTab(id,btn){
@@ -424,11 +438,11 @@ function liveUpdate(){
 }
 
 // ── Preview ───────────────────────────────────────────────────
-function previewWish(){const cfg=getConfig();if(!cfg.to){alert("Please enter your friend's name! 🎯");return;}window.open(buildURL(cfg),'_blank');}
+function previewWish(){const cfg=getConfig();if(!cfg.to){showError("⚠️ Please enter the birthday person's name to continue!");return;}window.open(buildURL(cfg),'_blank');}
 
 // ── Copy link ─────────────────────────────────────────────────
 function copyLink(){
-    const cfg=getConfig();if(!cfg.to){alert("Please enter your friend's name! 🎯");return;}
+    const cfg=getConfig();if(!cfg.to){showError("⚠️ Please enter the birthday person's name to continue!");return;}
     const url=buildURL(cfg);
     document.getElementById('link-text').textContent=url;
     document.getElementById('link-box').style.display='';
@@ -442,7 +456,7 @@ function copyLink(){
 
 // ── Download ──────────────────────────────────────────────────
 async function downloadFiles(){
-    const cfg=getConfig();if(!cfg.to){alert("Please enter your friend's name! 🎯");return;}
+    const cfg=getConfig();if(!cfg.to){showError("⚠️ Please enter the birthday person's name to continue!");return;}
     const btn=document.getElementById('dl-btn');btn.disabled=true;btn.textContent='⏳ Preparing...';
     try{
         const[r1,r2,r3]=await Promise.all([fetch('style.css'),fetch('script.js'),fetch('wish.html')]);
@@ -473,7 +487,7 @@ async function downloadFiles(){
         const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='birthday-'+slug+'.zip';a.click();URL.revokeObjectURL(a.href);
         btn.textContent='✅ Downloaded!';setTimeout(()=>{btn.textContent='⬇️ Download';btn.disabled=false;},4000);
     }catch(e){
-        alert('Download works when this page is served online.\n\nFor now: use Copy Link to share, or host the files on Netlify / GitHub Pages first!');
+        showError('⚠️ Download requires the page to be served online. Use Copy Link to share now, or host on Netlify / GitHub Pages first!');
         btn.textContent='⬇️ Download';btn.disabled=false;
     }
 }
