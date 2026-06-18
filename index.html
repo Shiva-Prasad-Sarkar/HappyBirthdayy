@@ -333,7 +333,11 @@ ol.steps{list-style:none;counter-reset:s}
     <div id="qr-box" style="display:none;text-align:center;padding:.9rem 0 .2rem">
         <img id="qr-img" src="" alt="QR Code" style="border-radius:12px;box-shadow:0 4px 18px rgba(0,0,0,.35);background:#fff;padding:8px;width:clamp(140px,42vw,180px);height:clamp(140px,42vw,180px)">
         <p style="font-size:.74rem;color:rgba(255,255,255,.45);margin-top:.45rem">📱 Scan with any phone camera to open</p>
-        <p id="short-fail-note" style="display:none;font-size:.75rem;color:rgba(255,215,0,.75);margin-top:.3rem">⚠️ Link shortening needs the page to be hosted online (GitHub Pages / Netlify). QR code works fine!</p>
+        <div style="display:flex;gap:.55rem;justify-content:center;flex-wrap:wrap;margin-top:.65rem">
+            <button id="dl-qr-btn" onclick="downloadQR()" style="display:inline-flex;align-items:center;gap:.35rem;padding:.48rem 1rem;border:none;border-radius:10px;background:linear-gradient(135deg,#4facfe,#00f2fe);color:#1a1a2e;font-family:'Poppins',sans-serif;font-size:clamp(.78rem,2.3vw,.86rem);font-weight:700;cursor:pointer;min-height:40px;transition:all .2s">📥 Download QR</button>
+            <button id="copy-qr-btn" onclick="copyQR()" style="display:inline-flex;align-items:center;gap:.35rem;padding:.48rem 1rem;border:none;border-radius:10px;background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;font-family:'Poppins',sans-serif;font-size:clamp(.78rem,2.3vw,.86rem);font-weight:700;cursor:pointer;min-height:40px;transition:all .2s">📋 Copy QR</button>
+        </div>
+        <p id="short-fail-note" style="display:none;font-size:.75rem;color:rgba(255,215,0,.75);margin-top:.5rem">⚠️ Link shortening needs the page to be hosted online (GitHub Pages / Netlify). QR code works fine!</p>
     </div>
 
     <div class="note" style="margin-top:.75rem">💡 <strong>Quickest way:</strong> Click <em>Shorten + QR</em> → send the short link or let your friend scan the QR code!</div>
@@ -608,6 +612,42 @@ async function shortenAndQR(){
         btn.textContent='✅ QR Ready!';
     }
     setTimeout(()=>{btn.textContent='✂️ Shorten Link + QR Code';btn.disabled=false;},3000);
+}
+async function downloadQR(){
+    const img=document.getElementById('qr-img');
+    if(!img.src||!img.src.startsWith('http')){showError('⚠️ Generate the QR code first!');return;}
+    const btn=document.getElementById('dl-qr-btn');
+    btn.disabled=true;btn.textContent='⏳';
+    try{
+        const res=await fetch(img.src);
+        const blob=await res.blob();
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download='birthday-qr.png';
+        document.body.appendChild(a);a.click();document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+        btn.textContent='✅ Saved!';
+    }catch{
+        window.open(img.src,'_blank');
+        btn.textContent='📥 Download QR';
+    }
+    setTimeout(()=>{btn.textContent='📥 Download QR';btn.disabled=false;},2500);
+}
+async function copyQR(){
+    const img=document.getElementById('qr-img');
+    if(!img.src||!img.src.startsWith('http')){showError('⚠️ Generate the QR code first!');return;}
+    const btn=document.getElementById('copy-qr-btn');
+    btn.disabled=true;btn.textContent='⏳';
+    try{
+        const res=await fetch(img.src);
+        const blob=await res.blob();
+        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+        btn.textContent='✅ Copied!';
+    }catch{
+        showError('⚠️ Could not copy image — use Download QR instead.');
+        btn.textContent='📋 Copy QR';
+    }
+    setTimeout(()=>{btn.textContent='📋 Copy QR';btn.disabled=false;},2500);
 }
 function copyShortLink(){
     const txt=document.getElementById('short-link-text').textContent;
